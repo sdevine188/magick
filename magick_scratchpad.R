@@ -18,7 +18,8 @@ show_col(viridis_pal()(100))
 viridis_pal()(100)
 
 # create data for plot
-viridis_percentage_scale_tbl <- tibble(x = seq(from = .01, to = 1.00, by = .01), y = seq(from = 1, to = 100, by = 1))
+viridis_percentage_scale_tbl <- tibble(x = seq(from = 0, to = 1, by = .01), 
+                                       y = seq(from = 0, to = 1, by = .01))
 
 # create plot
 plot_w_legend <- viridis_percentage_scale_tbl %>% ggplot(data = ., aes(x = x, y = y, color = x)) + geom_point() + 
@@ -26,12 +27,19 @@ plot_w_legend <- viridis_percentage_scale_tbl %>% ggplot(data = ., aes(x = x, y 
         guides(color = guide_colorbar(title = "IBFA denial rate"))
 plot_w_legend
 
-# save plot as png
+# save plot as png/pdf
 ggsave(filename = "plot_w_legend_png.png", plot = plot_w_legend, dpi = 300)
+ggsave(filename = "plot_w_legend_pdf.pdf", plot = plot_w_legend, dpi = 300)
 
 # load png into magick
 plot_w_legend_image <- image_read(path = "plot_w_legend_png.png")
 plot_w_legend_image
+
+# load pdf
+# note that pdf removes points for some reason?? better to use png for this, though in general pdf is cleaner image
+plot_w_legend_bitmap <- pdf_render_page(pdf = "plot_w_legend_pdf.pdf", page = 1, dpi = 300)
+plot_w_legend_image <- image_read(plot_w_legend_bitmap)
+plot_w_legend_image 
 
 # snip out legend
 # image_crop(image, "100x150+50+100"): crop out width:100px and height:150px starting +50px from the leftmost, 
